@@ -22,7 +22,13 @@ const getGenericResponse = async (response) => {
 
 module.exports = {
   request: async (restData, restMethod) => {
-    const wsUrl = ` https://api.github.com/users/${restData.username}/repos`;
+    let wsUrl;
+    if (restData.username) {
+      wsUrl = ` https://api.github.com/users/${restData.username}/repos`;
+    } else if (restData.repoName) {
+      wsUrl = `https://api.github.com/search/repositories?q=${restData.repoName}&per_page=4`;
+    } else return null;
+
     console.log('inside of rest:', restData, restMethod, wsUrl);
 
     switch (restMethod) {
@@ -32,7 +38,9 @@ module.exports = {
           .get(wsUrl, { headers: { 'Content-Type': 'application/json' } })
           // eslint-disable-next-line arrow-body-style
           .then(async (response) => {
-            console.log('github response:', response);
+            if (response.data.items) {
+              response.data = response.data.items;
+            }
             // eslint-disable-next-line no-return-await
             return await getGenericResponse(response);
           })
