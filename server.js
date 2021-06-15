@@ -14,5 +14,5 @@ app.use('/v1/gitApp/', routes);
 
 app.use(async (err, req, res, next) => {
   console.log('Fired this api:->: %s %s ', await req.url, await req.meth);
-  handleError(err, res);
+  handleError(req, res, err);
 });
